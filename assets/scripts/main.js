@@ -1,20 +1,62 @@
 document.addEventListener("DOMContentLoaded", () => {
-  const burger = document.querySelector(".header-mobile-burger");
+const burger = document.querySelector(".header-mobile-burger");
 const closeBtn = document.querySelector(".header-mobile-close");
 const mobileHeader = document.querySelector(".header-mobile");
 const mobileButton = document.querySelector(".header-mobile-button");
+const body = document.body;
 
 if (burger && closeBtn && mobileHeader && mobileButton) {
   burger.addEventListener("click", () => {
     mobileHeader.classList.add("active");
     mobileButton.classList.add("active");
+    body.classList.add("no-scroll");
   });
 
   closeBtn.addEventListener("click", () => {
     mobileHeader.classList.remove("active");
     mobileButton.classList.remove("active");
+    body.classList.remove("no-scroll");
   });
 }
+const slider = document.querySelector(".catalog-location-container");
+let isDown = false;
+let startX;
+let scrollLeft;
+
+slider.addEventListener("mousedown", (e) => {
+  isDown = true;
+  slider.classList.add("active"); // можно для стилей курсора
+  startX = e.pageX - slider.offsetLeft;
+  scrollLeft = slider.scrollLeft;
+});
+slider.addEventListener("mouseleave", () => {
+  isDown = false;
+  slider.classList.remove("active");
+});
+slider.addEventListener("mouseup", () => {
+  isDown = false;
+  slider.classList.remove("active");
+});
+slider.addEventListener("mousemove", (e) => {
+  if (!isDown) return;
+  e.preventDefault();
+  const x = e.pageX - slider.offsetLeft;
+  const walk = (x - startX) * 2; // скорость прокрутки
+  slider.scrollLeft = scrollLeft - walk;
+});
+
+// Для тачей на мобильных устройствах
+let touchStartX = 0;
+let touchScrollLeft = 0;
+slider.addEventListener("touchstart", (e) => {
+  touchStartX = e.touches[0].pageX;
+  touchScrollLeft = slider.scrollLeft;
+});
+slider.addEventListener("touchmove", (e) => {
+  const x = e.touches[0].pageX;
+  slider.scrollLeft = touchScrollLeft - (x - touchStartX);
+});
+
 
   // === Swiper слайдер ===
 const sliderEl = document.querySelector(".dream__slider");
