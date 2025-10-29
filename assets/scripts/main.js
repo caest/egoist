@@ -61,8 +61,7 @@ if (sliderEl) {
 }
 
 
-const galleryEl = document.querySelector(".object-gallery");
-if (galleryEl) {
+document.querySelectorAll(".object-gallery").forEach(galleryEl => {
   const objectGallery = new Swiper(galleryEl, {
     slidesPerView: 1,
     spaceBetween: 10,
@@ -89,7 +88,7 @@ if (galleryEl) {
 
   const swiperSlides = galleryEl.querySelectorAll(".swiper-slide");
   if (swiperSlides.length > 0) swiperSlides[0].classList.add("is-active");
-}
+});
 
 
   // === Кнопки "favorite" ===
@@ -533,20 +532,8 @@ document.querySelectorAll(".object-description-wrap").forEach((wrap) => {
   });
 });
 
-const rate = 8;
-const price = parseFloat(document.getElementById("priceValue").textContent.replace(/[^\d.]/g, ""));
-
-const downPaymentInput = document.getElementById("downPayment");
-const termInput = document.getElementById("term");
-const downProgress = document.getElementById("downProgress");
-const termProgress = document.getElementById("termProgress");
-
-const calcBtn = document.getElementById("calcBtn");
-const resetBtn = document.getElementById("resetBtn");
-
-const downValue = document.getElementById("downValue");
-const termValue = document.getElementById("termValue");
-const monthly = document.getElementById("monthly");
+/*
+getElementById("monthly");
 const loanAmount = document.getElementById("loanAmount");
 const interestSum = document.getElementById("interestSum");
 const totalSum = document.getElementById("totalSum");
@@ -602,9 +589,93 @@ resetBtn.addEventListener("click", () => {
   quarters.textContent = "-";
 });
 
-// ініціалізація прогресів при завантаженні
 updateProgress(downPaymentInput, downProgress);
 updateProgress(termInput, termProgress);
 
+});
+
+*/
+ 
+
+  const priceEl = document.getElementById("priceValue");
+  const downPaymentInput = document.getElementById("downPayment");
+  const termInput = document.getElementById("term");
+  const downProgress = document.getElementById("downProgress");
+  const termProgress = document.getElementById("termProgress");
+
+  const downValue = document.getElementById("downValue");
+  const termValue = document.getElementById("termValue");
+  const monthly = document.getElementById("monthly");
+  const loanAmount = document.getElementById("loanAmount");
+  const interestSum = document.getElementById("interestSum");
+  const totalSum = document.getElementById("totalSum");
+  const quarters = document.getElementById("quarters");
+
+  const calcBtn = document.getElementById("calcBtn");
+  const resetBtn = document.getElementById("resetBtn");
+
+  const price = parseFloat(priceEl.textContent.replace(/[^\d.]/g, ""));
+  const rate = parseFloat(document.getElementById("rateValue")?.textContent.replace(/[^\d.]/g, "")) || 8;
+
+  // Оновлення прогрес-барів
+  function updateProgress(input, progressEl) {
+    const min = input.min;
+    const max = input.max;
+    const val = input.value;
+    const percent = ((val - min) / (max - min)) * 100;
+    progressEl.style.width = percent + "%";
+  }
+
+  downPaymentInput.addEventListener("input", () => {
+    downValue.textContent = downPaymentInput.value + "%";
+    updateProgress(downPaymentInput, downProgress);
+  });
+
+  termInput.addEventListener("input", () => {
+    termValue.textContent = termInput.value;
+    updateProgress(termInput, termProgress);
+  });
+
+  // Основний розрахунок
+  function calculate() {
+    const downPercent = downPaymentInput.value / 100;
+    const months = Number(termInput.value);
+
+    const downPayment = price * downPercent; // перший внесок
+    const principal = price - downPayment; // сума кредиту
+    const monthlyRate = rate / 100 / 12;
+
+    const monthlyPayment = (principal * monthlyRate) / (1 - Math.pow(1 + monthlyRate, -months));
+    const totalCreditPayment = monthlyPayment * months;
+    const totalPayment = totalCreditPayment + downPayment; // разом із першим внеском
+    const totalInterest = totalPayment - price; // сума відсотків
+
+    monthly.textContent = "≈ " + monthlyPayment.toFixed(0) + " €";
+    loanAmount.textContent = principal.toFixed(0) + " €";
+    interestSum.textContent = totalInterest.toFixed(0) + " €";
+    totalSum.textContent = totalPayment.toFixed(0) + " €";
+    quarters.textContent = (months / 3).toFixed(0);
+  }
+
+  calcBtn.addEventListener("click", calculate);
+
+  resetBtn.addEventListener("click", () => {
+    downPaymentInput.value = 50;
+    termInput.value = 36;
+    downValue.textContent = "50%";
+    termValue.textContent = "36";
+    updateProgress(downPaymentInput, downProgress);
+    updateProgress(termInput, termProgress);
+
+    monthly.textContent = "≈ 0 €";
+    loanAmount.textContent = "-";
+    interestSum.textContent = "-";
+    totalSum.textContent = "-";
+    quarters.textContent = "-";
+  });
+
+  // Ініціалізація прогрес-барів
+  updateProgress(downPaymentInput, downProgress);
+  updateProgress(termInput, termProgress);
 });
 
