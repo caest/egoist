@@ -1342,7 +1342,7 @@ body.no-scroll {
   position: relative;
   &::before {
     content: "";
-    background-image: url("../images/divider.svg");
+    background-image: url("../images/object-after.svg");
     background-size: cover;
     background-repeat: no-repeat;
     width: 100%;
@@ -2050,7 +2050,7 @@ body.no-scroll {
 .object-attributes-wrap {
   display: flex;
   align-items: center;
-  gap:20px 70px;
+  gap:20px 50px;
   flex-wrap: wrap;
   padding: 30px 0;
 }
@@ -2059,6 +2059,9 @@ body.no-scroll {
   align-items: center;
   gap:5px;
   width: fit-content;
+  &:nth-child(6) {
+    width: 28%;
+  }
   span {
     font-family: "Montserrat";
     font-weight: 400;
@@ -2213,7 +2216,14 @@ body.no-scroll {
     }
     
   }
-
+.dream__link {
+  transition: all .3s;
+  &:hover {
+    background: #F4892D;
+    color: #F7F9FA;
+      transition: all .3s;
+  }
+}
 
 @media (max-width: 1760px) {
   .catalog {
@@ -2460,6 +2470,11 @@ body.no-scroll {
 }
 
 @media (max-width: 1280px) {
+  .object-attribute {
+    &:nth-child(6) {
+      width: min-content;
+    }
+  }
   .catalog {
     &-title {
       font-size: 52px;
@@ -2913,6 +2928,9 @@ body.no-scroll {
   }
 }
 @media (max-width: 720px) {
+  .filters-popup-header::before {
+    background-size: contain;
+  }
   .filter-container-body-price {
     padding-top: 10px;
   }

@@ -637,8 +637,6 @@ updateProgress(termInput, termProgress);
 });
 
 */
- 
-
   const priceEl = document.getElementById("priceValue");
   const downPaymentInput = document.getElementById("downPayment");
   const termInput = document.getElementById("term");
@@ -656,8 +654,17 @@ updateProgress(termInput, termProgress);
   const calcBtn = document.getElementById("calcBtn");
   const resetBtn = document.getElementById("resetBtn");
 
+  // Получаем данные из элементов (предполагаем, что эти данные будут в карточке объекта)
   const price = parseFloat(priceEl.textContent.replace(/[^\d.]/g, ""));
   const rate = parseFloat(document.getElementById("rateValue")?.textContent.replace(/[^\d.]/g, "")) || 8;
+  
+  // Дополнительные параметры из ТЗ (в реальном проекте будут браться из ACF полей)
+  const BUILD_END_DATE = new Date(); // по умолчанию - сегодня
+  BUILD_END_DATE.setMonth(BUILD_END_DATE.getMonth() + 12); // через 12 месяцев
+  
+  const CONTRACT_DATE = new Date(); // дата договора - сегодня
+  const FIRST_PAYMENT_DATE = new Date();
+  FIRST_PAYMENT_DATE.setMonth(FIRST_PAYMENT_DATE.getMonth() + 3); // +3 месяца от договора
 
   // Оновлення прогрес-барів
   function updateProgress(input, progressEl) {
@@ -678,25 +685,94 @@ updateProgress(termInput, termProgress);
     updateProgress(termInput, termProgress);
   });
 
-  // Основний розрахунок
+  // Функція додавання місяців до дати
+  function addMonthsSafe(date, months) {
+    const d = new Date(date.getTime());
+    const day = d.getDate();
+    d.setMonth(d.getMonth() + months);
+    if (d.getDate() !== day) {
+      d.setDate(0);
+    }
+    return d;
+  }
+
+  // Функція форматування чисел
+  function fmt(v) {
+    return Number.isFinite(v) ? v.toLocaleString('de-DE', {minimumFractionDigits:0,maximumFractionDigits:0}) : '0';
+  }
+
+  // Основний розрахунок по ТЗ (поквартальний)
   function calculate() {
     const downPercent = downPaymentInput.value / 100;
-    const months = Number(termInput.value);
+    const termM = Number(termInput.value);
+    
+    // Валідація по ТЗ
+    if (termM % 3 !== 0) {
+      alert('Термін має бути кратним 3 місяцям');
+      return;
+    }
 
-    const downPayment = price * downPercent; // перший внесок
-    const principal = price - downPayment; // сума кредиту
-    const monthlyRate = rate / 100 / 12;
+    // Розрахунки по ТЗ
+    const DOWNPAYMENT = Math.round(price * downPercent);
+    const PRINCIPAL = price - DOWNPAYMENT;
+    const TERM_Q = termM / 3;
+    const APR = rate;
+    const Q_RATE = APR ? (APR / 100) / 4 : 0;
 
-    const monthlyPayment = (principal * monthlyRate) / (1 - Math.pow(1 + monthlyRate, -months));
-    const totalCreditPayment = monthlyPayment * months;
-    const totalPayment = totalCreditPayment + downPayment; // разом із першим внеском
-    const totalInterest = totalPayment - price; // сума відсотків
+    // Базова доля основного боргу
+    let BASE = Math.round(PRINCIPAL / TERM_Q);
+    
+    let remain = PRINCIPAL;
+    let totalInterest = 0;
+    let totalPayments = DOWNPAYMENT; // включаємо перший внесок
+    let paymentDate = new Date(FIRST_PAYMENT_DATE);
 
-    monthly.textContent = "≈ " + monthlyPayment.toFixed(0) + " €";
-    loanAmount.textContent = principal.toFixed(0) + " €";
-    interestSum.textContent = totalInterest.toFixed(0) + " €";
-    totalSum.textContent = totalPayment.toFixed(0) + " €";
-    quarters.textContent = (months / 3).toFixed(0);
+    // Розрахунок графіка платежів
+    for (let q = 1; q <= TERM_Q; q++) {
+      const paymentDateISO = paymentDate.toISOString().slice(0, 10);
+      
+      // Перевірка чи нараховуються відсотки
+      const interestApplies = !(BUILD_END_DATE && paymentDate <= BUILD_END_DATE) && Q_RATE > 0;
+      
+      let interest = 0;
+      if (interestApplies) {
+        interest = Number((Math.round((remain * Q_RATE) * 100) / 100).toFixed(2));
+      }
+
+      let principalPart = BASE;
+      // Корекція для останнього кварталу
+      if (q === TERM_Q) {
+        principalPart = Number(remain.toFixed(0));
+      }
+
+      const pay = Number((principalPart + interest).toFixed(2));
+      const remainAfter = Number((remain - principalPart).toFixed(2));
+
+      totalInterest += interest;
+      totalPayments += pay;
+      remain = remainAfter;
+      
+      // Перехід до наступного кварталу
+      paymentDate = addMonthsSafe(paymentDate, 3);
+    }
+
+    // Оновлення UI
+    monthly.textContent = "≈ " + fmt((totalPayments - DOWNPAYMENT) / TERM_Q) + " €/квартал";
+    loanAmount.textContent = fmt(PRINCIPAL) + " €";
+    interestSum.textContent = fmt(totalInterest) + " €";
+    totalSum.textContent = fmt(totalPayments) + " €";
+    quarters.textContent = TERM_Q;
+
+    // Додатковий вивід для дебагу (можна видалити)
+    console.log({
+      price,
+      DOWNPAYMENT,
+      PRINCIPAL,
+      TERM_Q,
+      totalInterest,
+      totalPayments,
+      квартальний_платеж: (totalPayments - DOWNPAYMENT) / TERM_Q
+    });
   }
 
   calcBtn.addEventListener("click", calculate);
@@ -719,5 +795,7 @@ updateProgress(termInput, termProgress);
   // Ініціалізація прогрес-барів
   updateProgress(downPaymentInput, downProgress);
   updateProgress(termInput, termProgress);
+  
+  // Автоматичний розрахунок при завантаженні
+  calculate();
 });
-
