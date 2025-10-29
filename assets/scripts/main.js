@@ -757,7 +757,7 @@ updateProgress(termInput, termProgress);
     }
 
     // Оновлення UI
-    monthly.textContent = "≈ " + fmt((totalPayments - DOWNPAYMENT) / TERM_Q) + " €/квартал";
+    monthly.textContent = "≈ " + fmt((totalPayments - DOWNPAYMENT) / TERM_Q);
     loanAmount.textContent = fmt(PRINCIPAL) + " €";
     interestSum.textContent = fmt(totalInterest) + " €";
     totalSum.textContent = fmt(totalPayments) + " €";
