@@ -1,137 +1,181 @@
 document.addEventListener("DOMContentLoaded", () => {
-const burger = document.querySelector(".header-mobile-burger");
-const closeBtn = document.querySelector(".header-mobile-close");
-const mobileHeader = document.querySelector(".header-mobile");
-const mobileButton = document.querySelector(".header-mobile-button");
-const body = document.body;
+  // === Header scroll behavior ===
+ // === Header scroll behavior ===
+const header = document.querySelector('header');
 
-if (burger && closeBtn && mobileHeader && mobileButton) {
-  burger.addEventListener("click", () => {
-    mobileHeader.classList.add("active");
-    mobileButton.classList.add("active");
-    body.classList.add("no-scroll");
-  });
+// Проверяем, находимся ли мы на главной странице (можно добавить другую проверку)
+const isMainPage = document.body.classList.contains('main-page') || 
+                   header.classList.contains('header-main-page') ||
+                   window.location.pathname === '/' || 
+                   window.location.pathname.includes('index');
 
-  closeBtn.addEventListener("click", () => {
-    mobileHeader.classList.remove("active");
-    mobileButton.classList.remove("active");
-    body.classList.remove("no-scroll");
-  });
+if (isMainPage) {
+    let scrollTimeout;
+
+    function handleScroll() {
+        clearTimeout(scrollTimeout);
+        
+        if (window.scrollY > 50) {
+            header.classList.remove('header-main-page');
+        }
+        
+        scrollTimeout = setTimeout(function() {
+            if (window.scrollY <= 50) {
+                header.classList.add('header-main-page');
+            }
+        }, 100);
+    }
+
+    window.addEventListener('scroll', handleScroll);
+    
+    // Инициализация
+    if (window.scrollY <= 50) {
+        header.classList.add('header-main-page');
+    } else {
+        header.classList.remove('header-main-page');
+    }
 }
-const slider = document.querySelector(".catalog-location-container");
-let isDown = false;
-let startX;
-let scrollLeft;
+  // === Catalog slider ===
+  const slider = document.querySelector(".catalog-location-container");
+  if (slider) {
+    let isDown = false;
+    let startX;
+    let scrollLeft;
 
-slider.addEventListener("mousedown", (e) => {
-  isDown = true;
-  slider.classList.add("active"); // можно для стилей курсора
-  startX = e.pageX - slider.offsetLeft;
-  scrollLeft = slider.scrollLeft;
-});
-slider.addEventListener("mouseleave", () => {
-  isDown = false;
-  slider.classList.remove("active");
-});
-slider.addEventListener("mouseup", () => {
-  isDown = false;
-  slider.classList.remove("active");
-});
-slider.addEventListener("mousemove", (e) => {
-  if (!isDown) return;
-  e.preventDefault();
-  const x = e.pageX - slider.offsetLeft;
-  const walk = (x - startX) * 2; // скорость прокрутки
-  slider.scrollLeft = scrollLeft - walk;
-});
+    slider.addEventListener("mousedown", (e) => {
+      isDown = true;
+      slider.classList.add("active");
+      startX = e.pageX - slider.offsetLeft;
+      scrollLeft = slider.scrollLeft;
+    });
+    
+    slider.addEventListener("mouseleave", () => {
+      isDown = false;
+      slider.classList.remove("active");
+    });
+    
+    slider.addEventListener("mouseup", () => {
+      isDown = false;
+      slider.classList.remove("active");
+    });
+    
+    slider.addEventListener("mousemove", (e) => {
+      if (!isDown) return;
+      e.preventDefault();
+      const x = e.pageX - slider.offsetLeft;
+      const walk = (x - startX) * 2;
+      slider.scrollLeft = scrollLeft - walk;
+    });
 
-// Для тачей на мобильных устройствах
-let touchStartX = 0;
-let touchScrollLeft = 0;
-slider.addEventListener("touchstart", (e) => {
-  touchStartX = e.touches[0].pageX;
-  touchScrollLeft = slider.scrollLeft;
-});
-slider.addEventListener("touchmove", (e) => {
-  const x = e.touches[0].pageX;
-  slider.scrollLeft = touchScrollLeft - (x - touchStartX);
-});
-
+    // Для тачей на мобильных устройствах
+    let touchStartX = 0;
+    let touchScrollLeft = 0;
+    
+    slider.addEventListener("touchstart", (e) => {
+      touchStartX = e.touches[0].pageX;
+      touchScrollLeft = slider.scrollLeft;
+    });
+    
+    slider.addEventListener("touchmove", (e) => {
+      const x = e.touches[0].pageX;
+      slider.scrollLeft = touchScrollLeft - (x - touchStartX);
+    });
+  }
 
   // === Swiper слайдер ===
-const sliderEl = document.querySelector(".dream__slider");
-if (sliderEl) {
-  const dreamSlider = new Swiper(sliderEl, {
-    slidesPerView: 3,
-    loop: true,
-    pagination: {
-      el: sliderEl.querySelector(".dream__slider-pagination"),
-      type: "fraction",
-      formatFractionCurrent: (num) => (num < 10 ? `0${num}` : num),
-      formatFractionTotal: (num) => (num < 10 ? `0${num}` : num),
-    },
-    navigation: {
-      nextEl: sliderEl.querySelector(".dream__slider-next"),
-      prevEl: sliderEl.querySelector(".dream__slider-prev"),
-    },
-    breakpoints: {
-      320: {
-        slidesPerView: 1,
+  const sliderEl = document.querySelector(".dream__slider");
+  if (sliderEl) {
+    const dreamSlider = new Swiper(sliderEl, {
+      slidesPerView: 3,
+      loop: true,
+      pagination: {
+        el: sliderEl.querySelector(".dream__slider-pagination"),
+        type: "fraction",
+        formatFractionCurrent: (num) => (num < 10 ? `0${num}` : num),
+        formatFractionTotal: (num) => (num < 10 ? `0${num}` : num),
       },
-      720: {
-        slidesPerView: 2,
-        spaceBetween: 15,
+      navigation: {
+        nextEl: sliderEl.querySelector(".dream__slider-next"),
+        prevEl: sliderEl.querySelector(".dream__slider-prev"),
       },
+      breakpoints: {
+        320: {
+          slidesPerView: 1,
+        },
+        720: {
+          slidesPerView: 2,
+          spaceBetween: 15,
+        },
+        1480: {
+          slidesPerView: 3,
+          spaceBetween: 0,
+        },
+      },
+      on: {
+        slideChange(swiper) {
+          const slides = sliderEl.querySelectorAll(".swiper-slide");
+          slides.forEach((slide) => slide.classList.remove("is-active"));
+          if (slides[swiper.realIndex]) {
+            slides[swiper.realIndex].classList.add("is-active");
+          }
+        },
+      },
+    });
 
-      1480: {
-        slidesPerView: 3,
-        spaceBetween: 0,
+    const swiperSlides = sliderEl.querySelectorAll(".swiper-slide");
+    if (swiperSlides.length > 0) swiperSlides[0].classList.add("is-active");
+  }
+
+  // === Object gallery ===
+  document.querySelectorAll(".object-gallery").forEach(galleryEl => {
+    const objectGallery = new Swiper(galleryEl, {
+      slidesPerView: 1,
+      spaceBetween: 10,
+      loop: true,
+      pagination: {
+        el: galleryEl.querySelector(".object-gallery-pagination"),
+        type: "fraction",
+        formatFractionCurrent: (num) => (num < 10 ? `0${num}` : num),
+        formatFractionTotal: (num) => (num < 10 ? `0${num}` : num),
       },
-    },
-    on: {
-      slideChange(swiper) {
-        const slides = sliderEl.querySelectorAll(".swiper-slide");
-        slides.forEach((slide) => slide.classList.remove("is-active"));
-        if (slides[swiper.realIndex])
-          slides[swiper.realIndex].classList.add("is-active");
+      navigation: {
+        nextEl: galleryEl.querySelector(".object-gallery-next"),
+        prevEl: galleryEl.querySelector(".object-gallery-prev"),
       },
-    },
+      on: {
+        slideChange(swiper) {
+          const slides = galleryEl.querySelectorAll(".swiper-slide");
+          slides.forEach((slide) => slide.classList.remove("is-active"));
+          if (slides[swiper.realIndex]) {
+            slides[swiper.realIndex].classList.add("is-active");
+          }
+        },
+      },
+    });
+
+    const swiperSlides = galleryEl.querySelectorAll(".swiper-slide");
+    if (swiperSlides.length > 0) swiperSlides[0].classList.add("is-active");
   });
+  // === Mobile burger menu ===
+  const burger = document.querySelector(".header-mobile-burger");
+  const closeBtn = document.querySelector(".header-mobile-close");
+  const mobileHeader = document.querySelector(".header-mobile");
+  const mobileButton = document.querySelector(".header-mobile-button");
+  const body = document.body;
 
-  const swiperSlides = sliderEl.querySelectorAll(".swiper-slide");
-  if (swiperSlides.length > 0) swiperSlides[0].classList.add("is-active");
-}
+  if (burger && closeBtn && mobileHeader && mobileButton) {
+    burger.addEventListener("click", () => {
+      mobileHeader.classList.add("active");
+      mobileButton.classList.add("active");
+      body.classList.add("no-scroll");
+    });
 
-
-document.querySelectorAll(".object-gallery").forEach(galleryEl => {
-  const objectGallery = new Swiper(galleryEl, {
-    slidesPerView: 1,
-    spaceBetween: 10,
-    loop: true,
-    pagination: {
-      el: galleryEl.querySelector(".object-gallery-pagination"),
-      type: "fraction",
-      formatFractionCurrent: (num) => (num < 10 ? `0${num}` : num),
-      formatFractionTotal: (num) => (num < 10 ? `0${num}` : num),
-    },
-    navigation: {
-      nextEl: galleryEl.querySelector(".object-gallery-next"),
-      prevEl: galleryEl.querySelector(".object-gallery-prev"),
-    },
-    on: {
-      slideChange(swiper) {
-        const slides = galleryEl.querySelectorAll(".swiper-slide");
-        slides.forEach((slide) => slide.classList.remove("is-active"));
-        if (slides[swiper.realIndex])
-          slides[swiper.realIndex].classList.add("is-active");
-      },
-    },
-  });
-
-  const swiperSlides = galleryEl.querySelectorAll(".swiper-slide");
-  if (swiperSlides.length > 0) swiperSlides[0].classList.add("is-active");
-});
-
+    closeBtn.addEventListener("click", () => {
+      mobileHeader.classList.remove("active");
+      mobileButton.classList.remove("active");
+      body.classList.remove("no-scroll");
+    });
+  }
 
   // === Кнопки "favorite" ===
   const favoriteButtons = document.querySelectorAll(".product-card__favorite-btn");
@@ -155,24 +199,36 @@ document.querySelectorAll(".object-gallery").forEach(galleryEl => {
       });
     });
   }
+// === Premium слайдер ===
+const premiumSlider = document.querySelector(".premium-slider");
+if (premiumSlider) {
+  const premiumSlides = premiumSlider.querySelectorAll(".premium-slide");
+  const prevBtn = document.querySelector(".premium-slider-prev");
+  const nextBtn = document.querySelector(".premium-slider-next");
+  const pagination = document.querySelector(".premium-slider-pagination");
 
-  // === Premium слайдер ===
-  const premiumSlider = document.querySelector(".premium-slider");
-  if (premiumSlider) {
-    const premiumSlides = premiumSlider.querySelectorAll(".premium-slide");
-    const prevBtn = document.querySelector(".premium-slider-prev");
-    const nextBtn = document.querySelector(".premium-slider-next");
-    const pagination = document.querySelector(".premium-slider-pagination");
-
+  if (premiumSlides.length > 0) {
     let current = 0;
+
+    function formatNumber(num) {
+      return num < 10 ? `0${num}` : num;
+    }
 
     function updatePremiumSlider() {
       premiumSlides.forEach((slide, index) => {
         slide.style.transform = `translateX(-${current * 100}%)`;
         slide.classList.toggle("is-active", index === current);
       });
+
       if (pagination) {
-        pagination.textContent = `${current + 1}/${premiumSlides.length}`;
+        pagination.innerHTML = `
+          <span class="premium-slider-current">${formatNumber(current + 1)}</span>
+          <span class="premium-slider-divider">/</span>
+          <span class="premium-slider-total">${formatNumber(premiumSlides.length)}</span>
+        `;
+
+        const currentEl = pagination.querySelector(".premium-slider-current");
+        currentEl.classList.add("is-active");
       }
     }
 
@@ -192,34 +248,105 @@ document.querySelectorAll(".object-gallery").forEach(galleryEl => {
 
     updatePremiumSlider();
   }
+}
 
   // === Panorama слайдер ===
-  const panoramaEl = document.querySelector(".panorama-slider");
-  if (panoramaEl) {
-    const panoramaSlider = new Swiper(panoramaEl, {
-      slidesPerView: 2,
-      spaceBetween: 20,
-      loop: true,
-      navigation: {
-        nextEl: panoramaEl.querySelector(".panorama-slider-next"),
-        prevEl: panoramaEl.querySelector(".panorama-slider-prev"),
+const panoramaEl = document.querySelector(".panorama-slider");
+if (panoramaEl) {
+  const panoramaSlider = new Swiper(panoramaEl, {
+    slidesPerView: 2,
+    spaceBetween: 20,
+    loop: true,
+    navigation: {
+      nextEl: panoramaEl.querySelector(".panorama-slider-next"),
+      prevEl: panoramaEl.querySelector(".panorama-slider-prev"),
+    },
+    pagination: {
+      el: panoramaEl.querySelector(".panorama-slider-pagination"),
+      type: "fraction",
+      formatFractionCurrent: (num) => (num < 10 ? `0${num}` : num),
+      formatFractionTotal: (num) => (num < 10 ? `0${num}` : num),
+    },
+    breakpoints: {
+      320: {
+        slidesPerView: 1,
+        spaceBetween: 10,
       },
-      pagination: {
-        el: panoramaEl.querySelector(".panorama-slider-pagination"),
-        type: "fraction",
-        formatFractionCurrent: (num) => (num < 10 ? `0${num}` : num),
-        formatFractionTotal: (num) => (num < 10 ? `0${num}` : num),
+      768: {
+        slidesPerView: 2,
+        spaceBetween: 14,
       },
-      on: {
-        slideChange(swiper) {
-          panoramaEl.querySelectorAll(".swiper-slide").forEach(slide => slide.classList.remove("is-active"));
-          panoramaEl.querySelectorAll(".swiper-slide")[swiper.realIndex]?.classList.add("is-active");
-        },
+      1200: {
+        slidesPerView: 2,
+        spaceBetween: 20,
       },
-    });
+    },
+    on: {
+      slideChange(swiper) {
+        panoramaEl.querySelectorAll(".swiper-slide").forEach(slide => slide.classList.remove("is-active"));
+        const activeSlide = panoramaEl.querySelectorAll(".swiper-slide")[swiper.realIndex];
+        if (activeSlide) {
+          activeSlide.classList.add("is-active");
+        }
+      },
+    },
+  });
 
-    panoramaEl.querySelectorAll(".swiper-slide")[0]?.classList.add("is-active");
+  const firstSlide = panoramaEl.querySelector(".swiper-slide");
+  if (firstSlide) {
+    firstSlide.classList.add("is-active");
   }
+}
+
+
+  // === Story cliends ===
+
+const clientsStoriesEl = document.querySelector(".clients-stories-slider");
+const clientsStoriesControls = document.querySelector(".clients-stories-controls");
+
+if (clientsStoriesEl && clientsStoriesControls) {
+  const clientsStoriesSlider = new Swiper(clientsStoriesEl, {
+    slidesPerView: 3,
+    spaceBetween: 20,
+    loop: true,
+    navigation: {
+      nextEl: clientsStoriesControls.querySelector(".clients-stories-next"),
+      prevEl: clientsStoriesControls.querySelector(".clients-stories-prev"),
+    },
+    pagination: {
+      el: clientsStoriesControls.querySelector(".clients-stories-slider-pagination"),
+      type: "fraction",
+      formatFractionCurrent: (num) => (num < 10 ? `0${num}` : num),
+      formatFractionTotal: (num) => (num < 10 ? `0${num}` : num),
+    },
+    breakpoints: {
+      320: {
+        slidesPerView: 1,
+        spaceBetween: 10,
+      },
+      1200: {
+        slidesPerView: 2,
+        spaceBetween: 14,
+      },
+      1530: {
+        slidesPerView: 3,
+        spaceBetween: 30,
+      },
+    },
+    on: {
+      slideChange(swiper) {
+        clientsStoriesEl.querySelectorAll(".swiper-slide").forEach(slide => slide.classList.remove("is-active"));
+        const activeSlide = clientsStoriesEl.querySelectorAll(".swiper-slide")[swiper.realIndex];
+        if (activeSlide) activeSlide.classList.add("is-active");
+      },
+    },
+  });
+
+  const firstSlide = clientsStoriesEl.querySelector(".swiper-slide");
+  if (firstSlide) firstSlide.classList.add("is-active");
+}
+
+
 
   // === Price range slider ===
   const rangeInputs = document.querySelectorAll(".catalog-range input");
@@ -282,39 +409,41 @@ document.querySelectorAll(".object-gallery").forEach(galleryEl => {
   const filterBlocks = document.querySelectorAll(".catalog-filter");
   const sortBlock = document.querySelector(".filter-sort");
 
-  if (filterBtn) {
+  if (filterBtn && filtersContainer) {
     filterBtn.addEventListener("click", () => {
       filtersContainer.classList.toggle("active");
       filterBtn.classList.toggle("active");
     });
   }
 
-  filterBlocks.forEach(filter => {
-    const top = filter.querySelector(".catalog-filter-top");
-    if (top) {
-      top.addEventListener("click", e => {
-        if (e.target.closest(".catalog-filter-variant")) return;
-        const isOpen = filter.classList.contains("open");
-        document.querySelectorAll(".catalog-filter.open").forEach(f => f.classList.remove("open"));
-        if (!isOpen) filter.classList.add("open");
-      });
-      
-      document.addEventListener("click", e => {
-        if (!filter.contains(e.target)) filter.classList.remove("open");
-      });
-    }
-  });
-
-  document.querySelectorAll(".catalog-filter-variant").forEach(variant => {
-    variant.addEventListener("click", () => {
-      const parent = variant.closest(".catalog-filter-variants");
-      if (parent) {
-        parent.querySelectorAll(".catalog-filter-variant").forEach(v => v.classList.remove("active"));
-        variant.classList.add("active");
-        variant.closest(".catalog-filter").classList.remove("open");
+  if (filterBlocks.length > 0) {
+    filterBlocks.forEach(filter => {
+      const top = filter.querySelector(".catalog-filter-top");
+      if (top) {
+        top.addEventListener("click", e => {
+          if (e.target.closest(".catalog-filter-variant")) return;
+          const isOpen = filter.classList.contains("open");
+          document.querySelectorAll(".catalog-filter.open").forEach(f => f.classList.remove("open"));
+          if (!isOpen) filter.classList.add("open");
+        });
+        
+        document.addEventListener("click", e => {
+          if (!filter.contains(e.target)) filter.classList.remove("open");
+        });
       }
     });
-  });
+
+    document.querySelectorAll(".catalog-filter-variant").forEach(variant => {
+      variant.addEventListener("click", () => {
+        const parent = variant.closest(".catalog-filter-variants");
+        if (parent) {
+          parent.querySelectorAll(".catalog-filter-variant").forEach(v => v.classList.remove("active"));
+          variant.classList.add("active");
+          variant.closest(".catalog-filter").classList.remove("open");
+        }
+      });
+    });
+  }
 
   if (sortBlock) {
     const top = sortBlock.querySelector(".catalog-filter-top");
@@ -363,89 +492,90 @@ document.querySelectorAll(".object-gallery").forEach(galleryEl => {
   }
 
   const filterContainers = document.querySelectorAll(".filter-container");
+  if (filterContainers.length > 0) {
+    filterContainers.forEach(container => {
+      const top = container.querySelector(".filter-container-top");
+      const body = container.querySelector(".filter-container-body");
+      const choice = container.querySelector(".filter-choice");
 
-  filterContainers.forEach(container => {
-    const top = container.querySelector(".filter-container-top");
-    const body = container.querySelector(".filter-container-body");
-    const choice = container.querySelector(".filter-choice");
-
-    if (top && body && choice) {
-      top.addEventListener("click", () => {
-        container.classList.toggle("open");
-      });
-
-      body.querySelectorAll(".filter-container-item").forEach(item => {
-        item.addEventListener("click", () => {
-          choice.textContent = item.textContent;
-          container.classList.remove("open");
+      if (top && body && choice) {
+        top.addEventListener("click", () => {
+          container.classList.toggle("open");
         });
-      });
 
-      const rangeMin = body.querySelector(".range-min");
-      const rangeMax = body.querySelector(".range-max");
-      const inputMin = body.querySelector(".min-price");
-      const inputMax = body.querySelector(".max-price");
-      const progress = body.querySelector(".catalog-progress");
+        body.querySelectorAll(".filter-container-item").forEach(item => {
+          item.addEventListener("click", () => {
+            choice.textContent = item.textContent;
+            container.classList.remove("open");
+          });
+        });
 
-      if (rangeMin && rangeMax && inputMin && inputMax && progress) {
-        const minLimit = parseInt(rangeMin.min);
-        const maxLimit = parseInt(rangeMax.max);
-        const gap = 10000;
+        const rangeMin = body.querySelector(".range-min");
+        const rangeMax = body.querySelector(".range-max");
+        const inputMin = body.querySelector(".min-price");
+        const inputMax = body.querySelector(".max-price");
+        const progress = body.querySelector(".catalog-progress");
 
-        function updateChoice() {
-          choice.textContent = `${inputMin.value}€ — ${inputMax.value}€`;
-        }
+        if (rangeMin && rangeMax && inputMin && inputMax && progress) {
+          const minLimit = parseInt(rangeMin.min);
+          const maxLimit = parseInt(rangeMax.max);
+          const gap = 10000;
 
-        function updateProgress() {
-          const minVal = parseInt(rangeMin.value);
-          const maxVal = parseInt(rangeMax.value);
-          progress.style.left = ((minVal - minLimit) / (maxLimit - minLimit)) * 100 + "%";
-          progress.style.right = 100 - ((maxVal - minLimit) / (maxLimit - minLimit)) * 100 + "%";
-        }
-
-        const syncRangeToInput = () => {
-          let minVal = parseInt(rangeMin.value);
-          let maxVal = parseInt(rangeMax.value);
-          if (maxVal - minVal < gap) {
-            if (document.activeElement === rangeMin) minVal = maxVal - gap;
-            else maxVal = minVal + gap;
+          function updateChoice() {
+            choice.textContent = `${inputMin.value}€ — ${inputMax.value}€`;
           }
-          rangeMin.value = minVal;
-          rangeMax.value = maxVal;
-          inputMin.value = minVal;
-          inputMax.value = maxVal;
+
+          function updateProgress() {
+            const minVal = parseInt(rangeMin.value);
+            const maxVal = parseInt(rangeMax.value);
+            progress.style.left = ((minVal - minLimit) / (maxLimit - minLimit)) * 100 + "%";
+            progress.style.right = 100 - ((maxVal - minLimit) / (maxLimit - minLimit)) * 100 + "%";
+          }
+
+          const syncRangeToInput = () => {
+            let minVal = parseInt(rangeMin.value);
+            let maxVal = parseInt(rangeMax.value);
+            if (maxVal - minVal < gap) {
+              if (document.activeElement === rangeMin) minVal = maxVal - gap;
+              else maxVal = minVal + gap;
+            }
+            rangeMin.value = minVal;
+            rangeMax.value = maxVal;
+            inputMin.value = minVal;
+            inputMax.value = maxVal;
+            updateProgress();
+            updateChoice();
+          };
+
+          rangeMin.addEventListener("input", syncRangeToInput);
+          rangeMax.addEventListener("input", syncRangeToInput);
+
+          const syncInputToRange = () => {
+            let minVal = parseInt(inputMin.value);
+            let maxVal = parseInt(inputMax.value);
+            if (maxVal - minVal < gap) {
+              if (document.activeElement === inputMin) minVal = maxVal - gap;
+              else maxVal = minVal + gap;
+            }
+            if (minVal < minLimit) minVal = minLimit;
+            if (maxVal > maxLimit) maxVal = maxLimit;
+            inputMin.value = minVal;
+            inputMax.value = maxVal;
+            rangeMin.value = minVal;
+            rangeMax.value = maxVal;
+            updateProgress();
+            updateChoice();
+          };
+
+          inputMin.addEventListener("input", syncInputToRange);
+          inputMax.addEventListener("input", syncInputToRange);
+
           updateProgress();
           updateChoice();
-        };
-
-        rangeMin.addEventListener("input", syncRangeToInput);
-        rangeMax.addEventListener("input", syncRangeToInput);
-
-        const syncInputToRange = () => {
-          let minVal = parseInt(inputMin.value);
-          let maxVal = parseInt(inputMax.value);
-          if (maxVal - minVal < gap) {
-            if (document.activeElement === inputMin) minVal = maxVal - gap;
-            else maxVal = minVal + gap;
-          }
-          if (minVal < minLimit) minVal = minLimit;
-          if (maxVal > maxLimit) maxVal = maxLimit;
-          inputMin.value = minVal;
-          inputMax.value = maxVal;
-          rangeMin.value = minVal;
-          rangeMax.value = maxVal;
-          updateProgress();
-          updateChoice();
-        };
-
-        inputMin.addEventListener("input", syncInputToRange);
-        inputMax.addEventListener("input", syncInputToRange);
-
-        updateProgress();
-        updateChoice();
+        }
       }
-    }
-  });
+    });
+  }
 
   // === Catalog Pagination ===
   class CatalogPagination {
@@ -465,7 +595,6 @@ document.querySelectorAll(".object-gallery").forEach(galleryEl => {
       this.currentPageEl = document.querySelector('.catalog-fraction-current');
       this.totalPagesEl = document.querySelector('.catalog-fraction-pages');
 
-      // Проверяем, что все необходимые элементы существуют
       if (!this.catalogItems.length || !this.prevBtn || !this.nextBtn || !this.currentPageEl || !this.totalPagesEl) {
         console.warn('Pagination elements not found');
         return;
@@ -557,86 +686,25 @@ document.querySelectorAll(".object-gallery").forEach(galleryEl => {
     }
   }
 
-  // Инициализация пагинации
   const catalogPagination = new CatalogPagination();
   window.catalogPagination = catalogPagination;
 
+  // === Object description read more ===
+  document.querySelectorAll(".object-description-wrap").forEach((wrap) => {
+    const btn = wrap.querySelector(".object-read-more");
+    const fullDesc = wrap.querySelector(".object-full");
 
-document.querySelectorAll(".object-description-wrap").forEach((wrap) => {
-  const btn = wrap.querySelector(".object-read-more");
-  const fullDesc = wrap.querySelector(".object-full");
-
-  btn.addEventListener("click", () => {
-    fullDesc.classList.toggle("expanded");
-    btn.textContent = fullDesc.classList.contains("expanded") 
-      ? "показать меньше" 
-      : "показать больше";
+    if (btn && fullDesc) {
+      btn.addEventListener("click", () => {
+        fullDesc.classList.toggle("expanded");
+        btn.textContent = fullDesc.classList.contains("expanded") 
+          ? "показать меньше" 
+          : "показать больше";
+      });
+    }
   });
-});
 
-/*
-getElementById("monthly");
-const loanAmount = document.getElementById("loanAmount");
-const interestSum = document.getElementById("interestSum");
-const totalSum = document.getElementById("totalSum");
-const quarters = document.getElementById("quarters");
-
-function updateProgress(input, progressEl) {
-  const min = input.min;
-  const max = input.max;
-  const val = input.value;
-  const percent = ((val - min) / (max - min)) * 100;
-  progressEl.style.width = percent + "%";
-}
-
-downPaymentInput.addEventListener("input", () => {
-  downValue.textContent = downPaymentInput.value + "%";
-  updateProgress(downPaymentInput, downProgress);
-});
-
-termInput.addEventListener("input", () => {
-  termValue.textContent = termInput.value;
-  updateProgress(termInput, termProgress);
-});
-
-calcBtn.addEventListener("click", () => {
-  const downPercent = downPaymentInput.value / 100;
-  const months = Number(termInput.value);
-  const principal = price * (1 - downPercent);
-  const monthlyRate = rate / 100 / 12;
-  const monthlyPayment =
-    (principal * monthlyRate) / (1 - Math.pow(1 + monthlyRate, -months));
-
-  const totalPayment = monthlyPayment * months;
-  const interest = totalPayment - principal;
-
-  loanAmount.textContent = principal.toFixed(0) + " €";
-  interestSum.textContent = interest.toFixed(0) + " €";
-  totalSum.textContent = totalPayment.toFixed(0) + " €";
-  monthly.textContent = "≈ " + monthlyPayment.toFixed(0) + " €";
-  quarters.textContent = (months / 3).toFixed(0);
-});
-
-resetBtn.addEventListener("click", () => {
-  downPaymentInput.value = 50;
-  termInput.value = 36;
-  downValue.textContent = "50%";
-  termValue.textContent = "36";
-  updateProgress(downPaymentInput, downProgress);
-  updateProgress(termInput, termProgress);
-  monthly.textContent = "≈ 0 €";
-  loanAmount.textContent = "-";
-  interestSum.textContent = "-";
-  totalSum.textContent = "-";
-  quarters.textContent = "-";
-});
-
-updateProgress(downPaymentInput, downProgress);
-updateProgress(termInput, termProgress);
-
-});
-
-*/
+  // === Calculator ===
   const priceEl = document.getElementById("priceValue");
   const downPaymentInput = document.getElementById("downPayment");
   const termInput = document.getElementById("term");
@@ -654,148 +722,126 @@ updateProgress(termInput, termProgress);
   const calcBtn = document.getElementById("calcBtn");
   const resetBtn = document.getElementById("resetBtn");
 
-  // Получаем данные из элементов (предполагаем, что эти данные будут в карточке объекта)
-  const price = parseFloat(priceEl.textContent.replace(/[^\d.]/g, ""));
-  const rate = parseFloat(document.getElementById("rateValue")?.textContent.replace(/[^\d.]/g, "")) || 8;
-  
-  // Дополнительные параметры из ТЗ (в реальном проекте будут браться из ACF полей)
-  const BUILD_END_DATE = new Date(); // по умолчанию - сегодня
-  BUILD_END_DATE.setMonth(BUILD_END_DATE.getMonth() + 12); // через 12 месяцев
-  
-  const CONTRACT_DATE = new Date(); // дата договора - сегодня
-  const FIRST_PAYMENT_DATE = new Date();
-  FIRST_PAYMENT_DATE.setMonth(FIRST_PAYMENT_DATE.getMonth() + 3); // +3 месяца от договора
-
-  // Оновлення прогрес-барів
-  function updateProgress(input, progressEl) {
-    const min = input.min;
-    const max = input.max;
-    const val = input.value;
-    const percent = ((val - min) / (max - min)) * 100;
-    progressEl.style.width = percent + "%";
-  }
-
-  downPaymentInput.addEventListener("input", () => {
-    downValue.textContent = downPaymentInput.value + "%";
-    updateProgress(downPaymentInput, downProgress);
-  });
-
-  termInput.addEventListener("input", () => {
-    termValue.textContent = termInput.value;
-    updateProgress(termInput, termProgress);
-  });
-
-  // Функція додавання місяців до дати
-  function addMonthsSafe(date, months) {
-    const d = new Date(date.getTime());
-    const day = d.getDate();
-    d.setMonth(d.getMonth() + months);
-    if (d.getDate() !== day) {
-      d.setDate(0);
-    }
-    return d;
-  }
-
-  // Функція форматування чисел
-  function fmt(v) {
-    return Number.isFinite(v) ? v.toLocaleString('de-DE', {minimumFractionDigits:0,maximumFractionDigits:0}) : '0';
-  }
-
-  // Основний розрахунок по ТЗ (поквартальний)
-  function calculate() {
-    const downPercent = downPaymentInput.value / 100;
-    const termM = Number(termInput.value);
+  if (priceEl && downPaymentInput && termInput && downProgress && termProgress && 
+      downValue && termValue && monthly && loanAmount && interestSum && 
+      totalSum && quarters && calcBtn && resetBtn) {
     
-    // Валідація по ТЗ
-    if (termM % 3 !== 0) {
-      alert('Термін має бути кратним 3 місяцям');
-      return;
-    }
-
-    // Розрахунки по ТЗ
-    const DOWNPAYMENT = Math.round(price * downPercent);
-    const PRINCIPAL = price - DOWNPAYMENT;
-    const TERM_Q = termM / 3;
-    const APR = rate;
-    const Q_RATE = APR ? (APR / 100) / 4 : 0;
-
-    // Базова доля основного боргу
-    let BASE = Math.round(PRINCIPAL / TERM_Q);
+    const price = parseFloat(priceEl.textContent.replace(/[^\d.]/g, "")) || 0;
+    const rate = parseFloat(document.getElementById("rateValue")?.textContent.replace(/[^\d.]/g, "")) || 8;
     
-    let remain = PRINCIPAL;
-    let totalInterest = 0;
-    let totalPayments = DOWNPAYMENT; // включаємо перший внесок
-    let paymentDate = new Date(FIRST_PAYMENT_DATE);
+    const BUILD_END_DATE = new Date();
+    BUILD_END_DATE.setMonth(BUILD_END_DATE.getMonth() + 12);
+    
+    const CONTRACT_DATE = new Date();
+    const FIRST_PAYMENT_DATE = new Date();
+    FIRST_PAYMENT_DATE.setMonth(FIRST_PAYMENT_DATE.getMonth() + 3);
 
-    // Розрахунок графіка платежів
-    for (let q = 1; q <= TERM_Q; q++) {
-      const paymentDateISO = paymentDate.toISOString().slice(0, 10);
-      
-      // Перевірка чи нараховуються відсотки
-      const interestApplies = !(BUILD_END_DATE && paymentDate <= BUILD_END_DATE) && Q_RATE > 0;
-      
-      let interest = 0;
-      if (interestApplies) {
-        interest = Number((Math.round((remain * Q_RATE) * 100) / 100).toFixed(2));
-      }
-
-      let principalPart = BASE;
-      // Корекція для останнього кварталу
-      if (q === TERM_Q) {
-        principalPart = Number(remain.toFixed(0));
-      }
-
-      const pay = Number((principalPart + interest).toFixed(2));
-      const remainAfter = Number((remain - principalPart).toFixed(2));
-
-      totalInterest += interest;
-      totalPayments += pay;
-      remain = remainAfter;
-      
-      // Перехід до наступного кварталу
-      paymentDate = addMonthsSafe(paymentDate, 3);
+    function updateProgress(input, progressEl) {
+      const min = input.min;
+      const max = input.max;
+      const val = input.value;
+      const percent = ((val - min) / (max - min)) * 100;
+      progressEl.style.width = percent + "%";
     }
 
-    // Оновлення UI
-    monthly.textContent = "≈ " + fmt((totalPayments - DOWNPAYMENT) / TERM_Q);
-    loanAmount.textContent = fmt(PRINCIPAL) + " €";
-    interestSum.textContent = fmt(totalInterest) + " €";
-    totalSum.textContent = fmt(totalPayments) + " €";
-    quarters.textContent = TERM_Q;
-
-    // Додатковий вивід для дебагу (можна видалити)
-    console.log({
-      price,
-      DOWNPAYMENT,
-      PRINCIPAL,
-      TERM_Q,
-      totalInterest,
-      totalPayments,
-      квартальний_платеж: (totalPayments - DOWNPAYMENT) / TERM_Q
+    downPaymentInput.addEventListener("input", () => {
+      downValue.textContent = downPaymentInput.value + "%";
+      updateProgress(downPaymentInput, downProgress);
     });
-  }
 
-  calcBtn.addEventListener("click", calculate);
+    termInput.addEventListener("input", () => {
+      termValue.textContent = termInput.value;
+      updateProgress(termInput, termProgress);
+    });
 
-  resetBtn.addEventListener("click", () => {
-    downPaymentInput.value = 50;
-    termInput.value = 36;
-    downValue.textContent = "50%";
-    termValue.textContent = "36";
+    function addMonthsSafe(date, months) {
+      const d = new Date(date.getTime());
+      const day = d.getDate();
+      d.setMonth(d.getMonth() + months);
+      if (d.getDate() !== day) {
+        d.setDate(0);
+      }
+      return d;
+    }
+
+    function fmt(v) {
+      return Number.isFinite(v) ? v.toLocaleString('de-DE', {minimumFractionDigits:0,maximumFractionDigits:0}) : '0';
+    }
+
+    function calculate() {
+      const downPercent = downPaymentInput.value / 100;
+      const termM = Number(termInput.value);
+      
+      if (termM % 3 !== 0) {
+        alert('Термін має бути кратним 3 місяцям');
+        return;
+      }
+
+      const DOWNPAYMENT = Math.round(price * downPercent);
+      const PRINCIPAL = price - DOWNPAYMENT;
+      const TERM_Q = termM / 3;
+      const APR = rate;
+      const Q_RATE = APR ? (APR / 100) / 4 : 0;
+
+      let BASE = Math.round(PRINCIPAL / TERM_Q);
+      
+      let remain = PRINCIPAL;
+      let totalInterest = 0;
+      let totalPayments = DOWNPAYMENT;
+      let paymentDate = new Date(FIRST_PAYMENT_DATE);
+
+      for (let q = 1; q <= TERM_Q; q++) {
+        const paymentDateISO = paymentDate.toISOString().slice(0, 10);
+        
+        const interestApplies = !(BUILD_END_DATE && paymentDate <= BUILD_END_DATE) && Q_RATE > 0;
+        
+        let interest = 0;
+        if (interestApplies) {
+          interest = Number((Math.round((remain * Q_RATE) * 100) / 100).toFixed(2));
+        }
+
+        let principalPart = BASE;
+        if (q === TERM_Q) {
+          principalPart = Number(remain.toFixed(0));
+        }
+
+        const pay = Number((principalPart + interest).toFixed(2));
+        const remainAfter = Number((remain - principalPart).toFixed(2));
+
+        totalInterest += interest;
+        totalPayments += pay;
+        remain = remainAfter;
+        
+        paymentDate = addMonthsSafe(paymentDate, 3);
+      }
+
+      monthly.textContent = "≈ " + fmt((totalPayments - DOWNPAYMENT) / TERM_Q);
+      loanAmount.textContent = fmt(PRINCIPAL) + " €";
+      interestSum.textContent = fmt(totalInterest) + " €";
+      totalSum.textContent = fmt(totalPayments) + " €";
+      quarters.textContent = TERM_Q;
+    }
+
+    calcBtn.addEventListener("click", calculate);
+
+    resetBtn.addEventListener("click", () => {
+      downPaymentInput.value = 50;
+      termInput.value = 36;
+      downValue.textContent = "50%";
+      termValue.textContent = "36";
+      updateProgress(downPaymentInput, downProgress);
+      updateProgress(termInput, termProgress);
+
+      monthly.textContent = "≈ 0 €";
+      loanAmount.textContent = "-";
+      interestSum.textContent = "-";
+      totalSum.textContent = "-";
+      quarters.textContent = "-";
+    });
+
     updateProgress(downPaymentInput, downProgress);
     updateProgress(termInput, termProgress);
-
-    monthly.textContent = "≈ 0 €";
-    loanAmount.textContent = "-";
-    interestSum.textContent = "-";
-    totalSum.textContent = "-";
-    quarters.textContent = "-";
-  });
-
-  // Ініціалізація прогрес-барів
-  updateProgress(downPaymentInput, downProgress);
-  updateProgress(termInput, termProgress);
-  
-  // Автоматичний розрахунок при завантаженні
-  calculate();
+    
+    calculate();
+  }
 });
