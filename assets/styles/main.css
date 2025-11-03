@@ -445,6 +445,7 @@ body.no-scroll::after {
   position: absolute;
   top: 30px;
   right: 30px;
+  z-index: 99;
 }
 
 .popup-wishlist-top {
@@ -3762,6 +3763,11 @@ body.no-scroll::after {
   padding-bottom: 30px;
 }
 
+.popup-wishlist {
+  height: 95%;
+  overflow-y: auto;
+}
+
 @media (max-width: 1920px) {
   .about {
     height: 1080px;
@@ -4103,6 +4109,10 @@ body.no-scroll::after {
   }
 }
 @media (max-width: 1340px) {
+  .popup-wishlist {
+    top: 50px;
+    transform: translateX(-50%);
+  }
   .popup-contact-wishlist-wrap .popup-wishlist {
     padding: 40px;
     min-height: 700px;
@@ -4111,6 +4121,7 @@ body.no-scroll::after {
   .popup-wishlist {
     padding: 40px 20px;
     max-width: 95%;
+    height: 95%;
   }
   .popup-wishlist-title {
     font-size: 64px;
@@ -4579,8 +4590,7 @@ body.no-scroll::after {
   .popup-contact-wishlist-wrap .popup-wishlist {
     min-height: initial;
     max-height: 1300px;
-    height: -moz-fit-content;
-    height: fit-content;
+    height: 95%;
   }
   .contacts-info-divider-horizontal {
     display: block;
@@ -5196,7 +5206,7 @@ body.no-scroll::after {
     font-size: 32px;
   }
   .popup-wishlist {
-    top: 50%;
+    top: 20px;
     max-height: 95%;
     padding-bottom: 100px;
     padding: 30px 10px;

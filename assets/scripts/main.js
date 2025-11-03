@@ -35,11 +35,10 @@ if (isMainPage) {
     }
 }
 
-// Все триггеры попапов (data-popup или отдельные классы)
-const popupTriggers = document.querySelectorAll("[data-popup], .open-contact-popup");
-const popupCloses = document.querySelectorAll("[data-popup-close]");
-const blurBg = document.querySelector(".popup-blur-bg"); // если используешь псевдо-блюр
+/* popup */
+const blurBg = document.querySelector(".popup-blur-bg");
 
+// ------------------ Общие функции для управления попапами ------------------
 function openPopup(popup) {
   popup.classList.add("is-active");
   document.body.classList.add("no-scroll");
@@ -52,47 +51,47 @@ function closePopup(popup) {
   blurBg && blurBg.classList.remove("active");
 }
 
-// Открытие попапа по любому триггеру
-popupTriggers.forEach(trigger => {
-  trigger.addEventListener("click", e => {
-    e.preventDefault();
-    let popupSelector = trigger.dataset.popup; // если есть data-popup
-    let popup;
-    if(popupSelector){
-      popup = document.querySelector(popupSelector);
-    } else {
-      // если просто класс триггера для контактного попапа
-      popup = document.querySelector(".popup-contact-wishlist-wrap");
-    }
-    if(popup) openPopup(popup);
-  });
+// ------------------ Попап избранного ------------------
+const wishlistTriggers = document.querySelectorAll(".open-wishlist-popup");
+const wishlistPopup = document.querySelector(".popup-wishlist-wrap:not(.popup-contact-wishlist-wrap)"); // Только избранное
+const wishlistCloses = wishlistPopup.querySelectorAll(".popup-wishlist-close");
+
+wishlistTriggers.forEach(trigger => {
+  trigger.addEventListener("click", () => openPopup(wishlistPopup));
 });
 
-// Закрытие по кнопке
-popupCloses.forEach(close => {
-  close.addEventListener("click", () => {
-    const popup = close.closest(".popup-wishlist-wrap");
-    if(popup) closePopup(popup);
-  });
+wishlistCloses.forEach(close => {
+  close.addEventListener("click", () => closePopup(wishlistPopup));
 });
 
-// Закрытие по клику вне попапа
-document.querySelectorAll(".popup-wishlist-wrap").forEach(popup => {
-  popup.addEventListener("click", e => {
-    if(e.target === popup){
-      closePopup(popup);
-    }
-  });
+wishlistPopup.addEventListener("click", e => {
+  if(e.target === wishlistPopup) closePopup(wishlistPopup);
 });
 
-// Закрытие по Esc
+// ------------------ Попап контактов ------------------
+const contactTriggers = document.querySelectorAll(".open-contact-popup");
+const contactPopup = document.querySelector(".popup-contact-wishlist-wrap"); // Только контакты
+const contactCloses = contactPopup.querySelectorAll(".popup-wishlist-close");
+
+contactTriggers.forEach(trigger => {
+  trigger.addEventListener("click", () => openPopup(contactPopup));
+});
+
+contactCloses.forEach(close => {
+  close.addEventListener("click", () => closePopup(contactPopup));
+});
+
+contactPopup.addEventListener("click", e => {
+  if(e.target === contactPopup) closePopup(contactPopup);
+});
+
+// ------------------ Закрытие по Esc для всех ------------------
 document.addEventListener("keydown", e => {
   if(e.key === "Escape"){
-    document.querySelectorAll(".popup-wishlist-wrap.is-active").forEach(popup => {
-      closePopup(popup);
-    });
+    [wishlistPopup, contactPopup].forEach(popup => closePopup(popup));
   }
 });
+/* popup */
 
   // === Catalog slider ===
   const slider = document.querySelector(".catalog-location-container");
