@@ -99,6 +99,10 @@ body.no-scroll {
   overflow: hidden;
 }
 
+.hero__favorite {
+  cursor: pointer;
+}
+
 .breadcrumbs {
   display: flex;
   align-items: center;
@@ -366,6 +370,72 @@ body.no-scroll {
 .header__contact_link:hover svg path {
   fill: #f4892d;
   transition: all 0.3s;
+}
+
+.popup-wishlist-wrap {
+  display: none;
+}
+.popup-wishlist-wrap.is-active {
+  display: flex;
+}
+
+.popup-wishlist-close {
+  cursor: pointer;
+}
+
+body.no-scroll::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  -webkit-backdrop-filter: blur(8px);
+          backdrop-filter: blur(8px);
+  background: rgba(0, 0, 0, 0.2); /* можно затемнение */
+  z-index: 9990; /* ниже попапа */
+}
+
+.popup-wishlist {
+  background: #E6EEF5;
+  border: 1px solid #14345B;
+  padding: 50px 65px;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  max-width: 1280px;
+  z-index: 9999;
+  max-height: 825px;
+  height: 100%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  overflow: hidden;
+}
+
+.popup-wishlist-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.popup-wishlist-title {
+  font-family: "Cormorant";
+  font-weight: 600;
+  font-size: 80px;
+  line-height: 100%;
+  text-transform: uppercase;
+  color: #14345B;
+}
+
+.popup-wishlist-content {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0px;
+  overflow-y: auto;
+  height: 100%;
+  padding-bottom: 50px;
+}
+.popup-wishlist-content .product-card {
+  width: 50%;
 }
 
 .hero {
@@ -3996,6 +4066,25 @@ body.no-scroll {
   }
 }
 @media (max-width: 1340px) {
+  .popup-wishlist {
+    padding: 40px 20px;
+    max-width: 95%;
+  }
+  .popup-wishlist-title {
+    font-size: 64px;
+  }
+  .popup-wishlist {
+    min-height: 740px;
+  }
+  .popup-wishlist-top {
+    padding-bottom: 30px;
+  }
+  .popup-wishlist-content {
+    gap: 15px;
+  }
+  .popup-wishlist-content .product-card {
+    width: calc(50% - 15px);
+  }
   .about-column:nth-child(1) .about-autor {
     display: block;
     margin-left: initial;
@@ -5046,6 +5135,24 @@ body.no-scroll {
   }
 }
 @media (max-width: 720px) {
+  .popup-wishlist-content {
+    align-items: flex-start;
+  }
+  .popup-wishlist-title {
+    font-size: 32px;
+  }
+  .popup-wishlist {
+    top: 50%;
+    max-height: 95%;
+    padding-bottom: 100px;
+    padding: 30px 10px;
+  }
+  .popup-wishlist-content {
+    gap: 30px;
+  }
+  .popup-wishlist-content .product-card {
+    width: 100%;
+  }
   .hero {
     min-height: 812px;
   }

@@ -34,6 +34,53 @@ if (isMainPage) {
         header.classList.remove('header-main-page');
     }
 }
+
+const popupTriggers = document.querySelectorAll("[data-popup]");
+const popupCloses = document.querySelectorAll("[data-popup-close]");
+const contentWrapper = document.querySelector(".page-wrapper"); // контейнер с основным контентом, который блюрится
+
+popupTriggers.forEach(trigger => {
+  const popupSelector = trigger.dataset.popup;
+  const popup = document.querySelector(popupSelector);
+
+  trigger.addEventListener("click", () => {
+    popup.classList.add("is-active");
+    document.body.classList.add("no-scroll");
+    contentWrapper && contentWrapper.classList.add("is-blur");
+  });
+});
+
+popupCloses.forEach(close => {
+  close.addEventListener("click", () => {
+    const popup = close.closest(".popup-wishlist-wrap");
+    popup.classList.remove("is-active");
+    document.body.classList.remove("no-scroll");
+    contentWrapper && contentWrapper.classList.remove("is-blur");
+  });
+});
+
+// закрытие по клику вне попапа
+document.querySelectorAll(".popup-wishlist-wrap").forEach(popup => {
+  popup.addEventListener("click", e => {
+    if (e.target === popup) {
+      popup.classList.remove("is-active");
+      document.body.classList.remove("no-scroll");
+      contentWrapper && contentWrapper.classList.remove("is-blur");
+    }
+  });
+});
+
+// закрытие по Esc
+document.addEventListener("keydown", e => {
+  if (e.key === "Escape") {
+    document.querySelectorAll(".popup-wishlist-wrap.is-active").forEach(popup => {
+      popup.classList.remove("is-active");
+      document.body.classList.remove("no-scroll");
+      contentWrapper && contentWrapper.classList.remove("is-blur");
+    });
+  }
+});
+
   // === Catalog slider ===
   const slider = document.querySelector(".catalog-location-container");
   if (slider) {
