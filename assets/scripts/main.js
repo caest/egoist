@@ -35,48 +35,61 @@ if (isMainPage) {
     }
 }
 
-const popupTriggers = document.querySelectorAll("[data-popup]");
+// Все триггеры попапов (data-popup или отдельные классы)
+const popupTriggers = document.querySelectorAll("[data-popup], .open-contact-popup");
 const popupCloses = document.querySelectorAll("[data-popup-close]");
-const contentWrapper = document.querySelector(".page-wrapper"); // контейнер с основным контентом, который блюрится
+const blurBg = document.querySelector(".popup-blur-bg"); // если используешь псевдо-блюр
 
+function openPopup(popup) {
+  popup.classList.add("is-active");
+  document.body.classList.add("no-scroll");
+  blurBg && blurBg.classList.add("active");
+}
+
+function closePopup(popup) {
+  popup.classList.remove("is-active");
+  document.body.classList.remove("no-scroll");
+  blurBg && blurBg.classList.remove("active");
+}
+
+// Открытие попапа по любому триггеру
 popupTriggers.forEach(trigger => {
-  const popupSelector = trigger.dataset.popup;
-  const popup = document.querySelector(popupSelector);
-
-  trigger.addEventListener("click", () => {
-    popup.classList.add("is-active");
-    document.body.classList.add("no-scroll");
-    contentWrapper && contentWrapper.classList.add("is-blur");
+  trigger.addEventListener("click", e => {
+    e.preventDefault();
+    let popupSelector = trigger.dataset.popup; // если есть data-popup
+    let popup;
+    if(popupSelector){
+      popup = document.querySelector(popupSelector);
+    } else {
+      // если просто класс триггера для контактного попапа
+      popup = document.querySelector(".popup-contact-wishlist-wrap");
+    }
+    if(popup) openPopup(popup);
   });
 });
 
+// Закрытие по кнопке
 popupCloses.forEach(close => {
   close.addEventListener("click", () => {
     const popup = close.closest(".popup-wishlist-wrap");
-    popup.classList.remove("is-active");
-    document.body.classList.remove("no-scroll");
-    contentWrapper && contentWrapper.classList.remove("is-blur");
+    if(popup) closePopup(popup);
   });
 });
 
-// закрытие по клику вне попапа
+// Закрытие по клику вне попапа
 document.querySelectorAll(".popup-wishlist-wrap").forEach(popup => {
   popup.addEventListener("click", e => {
-    if (e.target === popup) {
-      popup.classList.remove("is-active");
-      document.body.classList.remove("no-scroll");
-      contentWrapper && contentWrapper.classList.remove("is-blur");
+    if(e.target === popup){
+      closePopup(popup);
     }
   });
 });
 
-// закрытие по Esc
+// Закрытие по Esc
 document.addEventListener("keydown", e => {
-  if (e.key === "Escape") {
+  if(e.key === "Escape"){
     document.querySelectorAll(".popup-wishlist-wrap.is-active").forEach(popup => {
-      popup.classList.remove("is-active");
-      document.body.classList.remove("no-scroll");
-      contentWrapper && contentWrapper.classList.remove("is-blur");
+      closePopup(popup);
     });
   }
 });
