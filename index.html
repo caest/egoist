@@ -268,6 +268,7 @@
       </div>
     </header>
   <main class="main">
+    
         <section class="hero">
             <video class="hero__video" src="./assets/video/main-compress.mp4" autoplay muted loop playsinline></video>
 
@@ -284,7 +285,8 @@
                             <a class="egoist__link egoist__link--secondary" href="#">Связаться</a>
                         </div>
                     </div>
-                            <div class="hero__favorite-wrap">
+                         <div class="hero__favorite-wrap" data-popup=".popup-wishlist-wrap">
+
                 <div class="hero__favorite favorite">
                     <div class="hero__favorite_top">
                         <div class="hero__favorite_title">Смотреть избранное</div>
@@ -1268,6 +1270,153 @@
       </div>
     </section>  
   </main>
+  <div class="popup-wishlist-wrap">
+   <div class="popup-wishlist">
+      <div class="popup-wishlist-top">
+        <div class="popup-wishlist-title">
+          Избранное
+        </div>
+        <div class="popup-wishlist-close" data-popup-close>
+          <img src="./assets/images/close-popup.svg" alt="">
+        </div>
+      </div>
+      <div class="popup-wishlist-content">
+          <a href="#" class="product-card">
+                        <div class="product-card__wrap">
+                          <img class="product-card-image" src="./assets/images/product-image-1.png" alt="">
+                          <div class="product-card__top">
+                            <div class="product-card__label product-card__label--status">
+                              new
+                            </div>
+                            <button class="product-card__favorite-btn is-active">
+                              <svg xmlns="http://www.w3.org/2000/svg" width="22" height="20" viewBox="0 0 22 20" fill="none">
+                                <path d="M2.73162 11.168L10.3388 18.3737C10.6387 18.6578 10.7886 18.7998 10.9708 18.8104C10.9902 18.8116 11.0098 18.8116 11.0292 18.8104C11.2114 18.7998 11.3613 18.6578 11.6612 18.3737L11.6612 18.3737L19.2684 11.168C21.3883 9.15996 21.6462 5.87395 19.8656 3.55973L19.5037 3.08949C17.3616 0.305512 13.0338 0.769813 11.531 3.94483C11.3189 4.39302 10.6811 4.39302 10.469 3.94483C8.96618 0.769813 4.63839 0.305512 2.49626 3.08949L2.13443 3.55973C0.353758 5.87395 0.611681 9.15995 2.73162 11.168Z" stroke="#F7F9FA"></path>
+                              </svg>
+                            </button>
+                          </div>
+                          <div class="product-card__attr">
+                            <div class="attributte">Вид на море</div>
+                          </div>
+                        </div>
+
+                        <div class="product-card__info">
+                          <h3 class="product-card__title">Комплекс Carmen</h3>
+                          <div class="product-card__characteristics_wrap">
+                            <div class="characteristics mob">
+                                <img src="./assets/images/location.svg" alt="">
+                                <span>Святой Влас</span>
+                              </div>
+                            <div class="product-card__characteristics_column start">
+                              <div class="characteristics start">
+                                <img src="./assets/images/location.svg" alt="">
+                                <span>Святой Влас</span>
+                              </div>
+                              <div class="characteristics">
+                                <img src="./assets/images/floor.svg" alt="">
+                                <span>1/4 этаж</span>
+                              </div>
+                              <div class="characteristics">
+                                <img src="./assets/images/square.svg" alt="">
+                                <span>72 м<sup>2</sup></span>
+                              </div>
+                            </div>
+
+                            <div class="product-card__characteristics_column end">
+                              <div class="characteristics">
+                                <img src="./assets/images/sun.svg" alt="">
+                                <span>1000 м до моря</span>
+                              </div>
+                              <div class="characteristics">
+                                <img src="./assets/images/appartment.svg" alt="">
+                                <span>Студия + 2 спальни</span>
+                              </div>
+                              <div class="characteristics end">
+                                <img src="./assets/images/services.svg" alt="">
+                                <span>120 €/год такса поддержки</span>
+                              </div>
+                            </div>
+                            <div class="characteristics mob">
+                                <img src="./assets/images/services.svg" alt="">
+                                <span>120 €/год такса поддержки</span>
+                              </div>
+                          </div>
+
+                          <div class="product-card__bottom">
+                            <div class="product-card__price">310 000 €</div>
+                            <button class="product-card__button">Задать вопрос</button>
+                          </div>
+                        </div>
+          </a>
+   <a href="#" class="product-card">
+                        <div class="product-card__wrap">
+                          <img class="product-card-image" src="./assets/images/product-image-1.png" alt="">
+                          <div class="product-card__top">
+                            <div class="product-card__label product-card__label--status">
+                              new
+                            </div>
+                            <button class="product-card__favorite-btn is-active">
+                              <svg xmlns="http://www.w3.org/2000/svg" width="22" height="20" viewBox="0 0 22 20" fill="none">
+                                <path d="M2.73162 11.168L10.3388 18.3737C10.6387 18.6578 10.7886 18.7998 10.9708 18.8104C10.9902 18.8116 11.0098 18.8116 11.0292 18.8104C11.2114 18.7998 11.3613 18.6578 11.6612 18.3737L11.6612 18.3737L19.2684 11.168C21.3883 9.15996 21.6462 5.87395 19.8656 3.55973L19.5037 3.08949C17.3616 0.305512 13.0338 0.769813 11.531 3.94483C11.3189 4.39302 10.6811 4.39302 10.469 3.94483C8.96618 0.769813 4.63839 0.305512 2.49626 3.08949L2.13443 3.55973C0.353758 5.87395 0.611681 9.15995 2.73162 11.168Z" stroke="#F7F9FA"></path>
+                              </svg>
+                            </button>
+                          </div>
+                          <div class="product-card__attr">
+                            <div class="attributte">Вид на море</div>
+                          </div>
+                        </div>
+
+                        <div class="product-card__info">
+                          <h3 class="product-card__title">Комплекс Carmen</h3>
+                          <div class="product-card__characteristics_wrap">
+                            <div class="characteristics mob">
+                                <img src="./assets/images/location.svg" alt="">
+                                <span>Святой Влас</span>
+                              </div>
+                            <div class="product-card__characteristics_column start">
+                              <div class="characteristics start">
+                                <img src="./assets/images/location.svg" alt="">
+                                <span>Святой Влас</span>
+                              </div>
+                              <div class="characteristics">
+                                <img src="./assets/images/floor.svg" alt="">
+                                <span>1/4 этаж</span>
+                              </div>
+                              <div class="characteristics">
+                                <img src="./assets/images/square.svg" alt="">
+                                <span>72 м<sup>2</sup></span>
+                              </div>
+                            </div>
+
+                            <div class="product-card__characteristics_column end">
+                              <div class="characteristics">
+                                <img src="./assets/images/sun.svg" alt="">
+                                <span>1000 м до моря</span>
+                              </div>
+                              <div class="characteristics">
+                                <img src="./assets/images/appartment.svg" alt="">
+                                <span>Студия + 2 спальни</span>
+                              </div>
+                              <div class="characteristics end">
+                                <img src="./assets/images/services.svg" alt="">
+                                <span>120 €/год такса поддержки</span>
+                              </div>
+                            </div>
+                            <div class="characteristics mob">
+                                <img src="./assets/images/services.svg" alt="">
+                                <span>120 €/год такса поддержки</span>
+                              </div>
+                          </div>
+
+                          <div class="product-card__bottom">
+                            <div class="product-card__price">310 000 €</div>
+                            <button class="product-card__button">Задать вопрос</button>
+                          </div>
+                        </div>
+          </a>
+      </div>
+    </div>
+  </div>
+ 
     <footer class="footer">
       <div class="container">
          <img
