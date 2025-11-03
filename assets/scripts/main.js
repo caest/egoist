@@ -1,6 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
   // === Header scroll behavior ===
- // === Header scroll behavior ===
 const header = document.querySelector('header');
 
 // Проверяем, находимся ли мы на главной странице (можно добавить другую проверку)
@@ -157,25 +156,29 @@ if (isMainPage) {
     if (swiperSlides.length > 0) swiperSlides[0].classList.add("is-active");
   });
   // === Mobile burger menu ===
-  const burger = document.querySelector(".header-mobile-burger");
-  const closeBtn = document.querySelector(".header-mobile-close");
-  const mobileHeader = document.querySelector(".header-mobile");
-  const mobileButton = document.querySelector(".header-mobile-button");
-  const body = document.body;
+ const burger = document.querySelector(".header-mobile-burger");
+const closeBtn = document.querySelector(".header-mobile-close");
+const mobileHeader = document.querySelector(".header-mobile");
+const mobileButton = document.querySelector(".header-mobile-button");
+const mainHeader = document.querySelector(".header");
+const body = document.body;
 
-  if (burger && closeBtn && mobileHeader && mobileButton) {
-    burger.addEventListener("click", () => {
-      mobileHeader.classList.add("active");
-      mobileButton.classList.add("active");
-      body.classList.add("no-scroll");
-    });
+if (burger && closeBtn && mobileHeader && mobileButton && mainHeader) {
+  burger.addEventListener("click", () => {
+    mobileHeader.classList.add("active");
+    mobileButton.classList.add("active");
+    mainHeader.classList.add("active");
+    body.classList.add("no-scroll");
+  });
 
-    closeBtn.addEventListener("click", () => {
-      mobileHeader.classList.remove("active");
-      mobileButton.classList.remove("active");
-      body.classList.remove("no-scroll");
-    });
-  }
+  closeBtn.addEventListener("click", () => {
+    mobileHeader.classList.remove("active");
+    mobileButton.classList.remove("active");
+    mainHeader.classList.remove("active");
+    body.classList.remove("no-scroll");
+  });
+}
+
 
   // === Кнопки "favorite" ===
   const favoriteButtons = document.querySelectorAll(".product-card__favorite-btn");
