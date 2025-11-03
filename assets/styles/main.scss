@@ -410,17 +410,24 @@ body.no-scroll {
 
 .hero {
   height: 1080px;
+    position: relative;
+  min-height: 1080px;
   padding: 200px 0 130px 0;
+  overflow: hidden;
   .container {
     position: relative;
     height: 100%;
+
   }
   &__video {
-      position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  min-width: 101%;
+  min-height: 100%;
+  width: auto;
+  height: auto;
+  transform: translate(-50%, -50%);
   object-fit: cover;
   z-index: -1;
   }
@@ -3987,6 +3994,9 @@ text-transform: uppercase;
   }
 }
 @media (max-width: 1366px) {
+  .hero {
+    min-height: 1024px;
+  }
   .privacy {
     padding-bottom: 160px;
   }
@@ -4428,6 +4438,9 @@ text-transform: uppercase;
   }
 }
 @media (max-width: 1024px) {
+   .hero {
+    min-height: 768px;
+  }
   .contacts-info {
   width: 100%;
 }
@@ -4943,6 +4956,9 @@ letter-spacing: -2%;
   }
 }
 @media (max-width: 768px) {
+   .hero {
+    min-height: 1024px;
+  } 
   .privacy-description {
     font-size: 20px;
   }
@@ -5197,6 +5213,9 @@ letter-spacing: -2%;
   }
 }
 @media (max-width: 720px) {
+   .hero {
+    min-height: 812px;
+  }
   .pt100 {
     padding-top: 80px;
 }
