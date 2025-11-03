@@ -369,14 +369,22 @@ body.no-scroll {
 }
 
 .hero {
-  background: url("../images/hero-bg.png") no-repeat;
-  background-size: cover;
   height: 1080px;
   padding: 200px 0 130px 0;
 }
 .hero .container {
   position: relative;
   height: 100%;
+}
+.hero__video {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  -o-object-fit: cover;
+     object-fit: cover;
+  z-index: -1;
 }
 .hero__content {
   display: flex;
@@ -3275,6 +3283,7 @@ body.no-scroll {
 }
 .contacts-title span {
   text-transform: lowercase;
+  font-style: italic;
 }
 
 .contacts-autor {
@@ -3348,6 +3357,7 @@ body.no-scroll {
 }
 .contacts-form-title span {
   text-transform: lowercase;
+  font-style: italic;
 }
 
 .contacts-form-description {
