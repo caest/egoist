@@ -3696,6 +3696,11 @@ padding: 30px 0;
 .privacy-breadcrumbs {
     padding-bottom: 30px;
 }
+@media(max-width:1920px) {
+  .about {
+    height: 1080px;
+  }
+}
 @media (max-width: 1760px) {
   .about-column:nth-child(1)::before {
     left: 25%;
@@ -5184,6 +5189,9 @@ letter-spacing: -2%;
   }
 }
 @media (max-width: 720px) {
+  .pt100 {
+    padding-top: 80px;
+}
   .privacy {
     padding-top: 100px;
   }
